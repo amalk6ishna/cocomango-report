@@ -1,168 +1,348 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Cocomango Daily Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocomango Daily Report</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --accent: #f5a623; /* Mango Orange */
+            --accent-hover: #ffbc42;
+            --border: #333333;
+        }
 
-<style>
-body{
-    font-family: Arial;
-    background:#111;
-    color:#fff;
-    padding:20px;
-}
-h1{color:#00ffae;}
-input{width:70px;margin:3px;padding:4px;}
-button{
-    padding:10px;
-    background:#00ffae;
-    border:none;
-    font-weight:bold;
-    cursor:pointer;
-}
-table{
-    border-collapse:collapse;
-    margin-top:15px;
-}
-td,th{
-    border:1px solid #555;
-    padding:6px;
-}
-#report{
-    background:#000;
-    padding:15px;
-    margin-top:20px;
-}
-</style>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .input-grid.headers {
+            font-weight: bold;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            width: 70px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--accent);
+            color: var(--bg-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Report Styles */
+        #reportOutput {
+            display: none;
+            margin-top: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2a2a2a;
+            color: var(--accent);
+        }
+
+        .highlight {
+            background-color: rgba(245, 166, 35, 0.1);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .summary-box {
+            background-color: #2a2a2a;
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
-
 <body>
 
-<h1>🥭 COCOMANGO DAILY ACCOUNTANT</h1>
+<div class="container">
+    <h1>🥥 Cocomango Daily Report 🥭</h1>
 
-<h3>Opening Stock (Fridge)</h3>
-300ml <input id="o300f">
-600ml <input id="o600f">
-Mango <input id="omango">
-Coffee <input id="ocoffee">
-Rose <input id="orose">
-Badam <input id="obadam">
-Chocolate <input id="ochoco">
+    <div id="formContainer">
+        </div>
 
-<h3>Stock Added</h3>
-Small <input id="as">
-Large <input id="al">
-Mango <input id="amango">
-Coffee <input id="acoffee">
-Badam <input id="abadam">
+    <div class="card">
+        <h2>5️⃣ PARCEL INCOME</h2>
+        <div class="input-group">
+            <label>Parcel Charges Received (₹): </label>
+            <input type="number" id="parcelIncome" value="0" min="0">
+        </div>
+    </div>
 
-<h3>Current Stock</h3>
-300ml <input id="c300">
-600ml <input id="c600">
-Mango <input id="cmango">
-Coffee <input id="ccoffee">
-Rose <input id="crose">
-Badam <input id="cbadam">
-Chocolate <input id="cchoco">
+    <div class="card">
+        <h2>6️⃣ EXPENSES</h2>
+        <div class="input-grid">
+            <label>Auto (₹):</label>
+            <input type="number" id="expAuto" value="0" min="0">
+        </div>
+        <div class="input-grid">
+            <label>Salary (₹):</label>
+            <input type="number" id="expSalary" value="0" min="0">
+        </div>
+        <div class="input-grid">
+            <label>Other Expenses (₹):</label>
+            <input type="number" id="expOther" value="0" min="0">
+        </div>
+    </div>
 
-<h3>Staff Drinks</h3>
-Staff Small <input id="ss">
-Staff Large <input id="sl">
+    <button class="btn" onclick="generateReport()">Generate Daily Report</button>
 
-<h3>Payments</h3>
-Paytm <input id="paytm">
-Cash <input id="cash">
-Parcel Income <input id="parcel">
-
-<h3>Expenses</h3>
-Auto <input id="auto">
-Salary <input id="salary">
-Other <input id="other">
-
-<br><br>
-<button onclick="generate()">Generate Report</button>
-
-<div id="report"></div>
+    <div id="reportOutput">
+        </div>
+</div>
 
 <script>
+    // Product Configuration
+    const products = [
+        { id: 'tc300', name: 'Tender Coconut Sarbath (300ml)', price: 70 },
+        { id: 'tc600', name: 'Tender Coconut Sarbath (600ml)', price: 100 },
+        { id: 'mango', name: 'Thick Mango Juice', price: 100 },
+        { id: 'coffee', name: 'Cold Coffee', price: 90 },
+        { id: 'rose', name: 'Rose Milk', price: 90 },
+        { id: 'badam', name: 'Badam Milk', price: 90 },
+        { id: 'choco', name: 'Chocolate Milk', price: 90 }
+    ];
 
-const price={
- small:70,
- large:100,
- mango:100,
- coffee:90,
- rose:90,
- badam:90,
- choco:90
-}
+    const sections = [
+        { id: 'open', title: '1️⃣ MORNING OPENING STOCK', hasFridgeFreezer: true },
+        { id: 'add', title: '2️⃣ STOCK ADDED TODAY', hasFridgeFreezer: true },
+        { id: 'close', title: '3️⃣ CURRENT PHYSICAL STOCK (NOW)', hasFridgeFreezer: true },
+        { id: 'staff', title: '4️⃣ STAFF CONSUMPTION (FREE DRINKS)', hasFridgeFreezer: false }
+    ];
 
-function val(id){return Number(document.getElementById(id).value)||0}
+    // Initialize Form UI
+    function buildForm() {
+        const container = document.getElementById('formContainer');
+        
+        sections.forEach(sec => {
+            let html = `<div class="card"><h2>${sec.title}</h2>`;
+            
+            if (sec.hasFridgeFreezer) {
+                html += `<div class="input-grid headers"><div>Product</div><div>Freezer</div><div>Fridge</div></div>`;
+                products.forEach(p => {
+                    html += `
+                    <div class="input-grid">
+                        <div>${p.name}</div>
+                        <input type="number" id="${sec.id}_${p.id}_fz" value="0" min="0" placeholder="0">
+                        <input type="number" id="${sec.id}_${p.id}_fr" value="0" min="0" placeholder="0">
+                    </div>`;
+                });
+            } else {
+                products.forEach(p => {
+                    html += `
+                    <div class="input-grid" style="grid-template-columns: 2fr 1fr;">
+                        <div>${p.name}</div>
+                        <input type="number" id="${sec.id}_${p.id}" value="0" min="0" placeholder="0">
+                    </div>`;
+                });
+            }
+            html += `</div>`;
+            container.innerHTML += html;
+        });
+    }
 
-function generate(){
+    // Helper to get value safely
+    const val = (id) => parseInt(document.getElementById(id)?.value) || 0;
 
-// Opening
-o300=val("o300f")
-o600=val("o600f")
-omango=val("omango")
-ocoffee=val("ocoffee")
-orose=val("orose")
-obadam=val("obadam")
-ochoco=val("ochoco")
+    // Generate Report Logic
+    function generateReport() {
+        let reportHTML = `<h1>📊 COCOMANGO DAILY REPORT</h1>`;
+        let data = {};
+        let totalSalesRevenue = 0;
 
-// Added
-as=val("as")
-al=val("al")
-amango=val("amango")
-acoffee=val("acoffee")
-abadam=val("abadam")
+        // Collect and calculate data
+        products.forEach(p => {
+            const oFz = val(`open_${p.id}_fz`); const oFr = val(`open_${p.id}_fr`);
+            const aFz = val(`add_${p.id}_fz`); const aFr = val(`add_${p.id}_fr`);
+            const cFz = val(`close_${p.id}_fz`); const cFr = val(`close_${p.id}_fr`);
+            
+            const openTotal = oFz + oFr;
+            const addTotal = aFz + aFr;
+            const availableTotal = openTotal + addTotal;
+            const closeTotal = cFz + cFr;
+            const staffTotal = val(`staff_${p.id}`);
+            
+            let sold = availableTotal - closeTotal - staffTotal;
+            sold = sold < 0 ? 0 : sold; // Prevent negative sales
+            const revenue = sold * p.price;
+            totalSalesRevenue += revenue;
 
-// Closing
-c300=val("c300")
-c600=val("c600")
-cmango=val("cmango")
-ccoffee=val("ccoffee")
-crose=val("crose")
-cbadam=val("cbadam")
-cchoco=val("cchoco")
+            data[p.id] = { oFz, oFr, openTotal, aFz, aFr, addTotal, availableTotal, cFz, cFr, closeTotal, staffTotal, sold, revenue, price: p.price, name: p.name };
+        });
 
-// Staff
-ss=val("ss")
-sl=val("sl")
+        const parcelIncome = val('parcelIncome');
+        const expAuto = val('expAuto');
+        const expSalary = val('expSalary');
+        const expOther = val('expOther');
+        const totalExpenses = expAuto + expSalary + expOther;
+        const grossRevenue = totalSalesRevenue + parcelIncome;
+        const netProfit = grossRevenue - totalExpenses;
 
-// Sales from stock difference
-soldSmall = (o300 + as) - c300 - ss
-soldLarge = (o600 + al) - c600 - sl
-soldMango = (omango + amango) - cmango
-soldCoffee = (ocoffee + acoffee) - ccoffee
-soldBadam = (obadam + abadam) - cbadam
-soldRose = orose - crose
-soldChoco = ochoco - cchoco
+        // 1. Opening Stock Table
+        reportHTML += `<h3>1️⃣ Opening Stock</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].oFz}</td><td>${data[p.id].oFr}</td><td><b>${data[p.id].openTotal}</b></td></tr>`; });
+        reportHTML += `</table>`;
 
-salesTotal =
-soldSmall*price.small +
-soldLarge*price.large +
-soldMango*price.mango +
-soldCoffee*price.coffee +
-soldBadam*price.badam +
-soldRose*price.rose +
-soldChoco*price.choco
+        // 2. Added Stock Table
+        reportHTML += `<h3>2️⃣ Added Stock Today</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].aFz}</td><td>${data[p.id].aFr}</td><td><b>${data[p.id].addTotal}</b></td></tr>`; });
+        reportHTML += `</table>`;
 
-paytm=val("paytm")
-cash=val("cash")
-parcel=val("parcel")
+        // 3. Total Available Stock
+        reportHTML += `<h3>3️⃣ Total Available Stock</h3><table><tr><th>Product</th><th>Total Available (Opening + Added)</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td><b>${data[p.id].availableTotal}</b></td></tr>`; });
+        reportHTML += `</table>`;
 
-expenses = val("auto")+val("salary")+val("other")
+        // 4. Closing Stock Table
+        reportHTML += `<h3>4️⃣ Closing Stock (Physical)</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].cFz}</td><td>${data[p.id].cFr}</td><td><b>${data[p.id].closeTotal}</b></td></tr>`; });
+        reportHTML += `</table>`;
 
-profit = paytm + cash + parcel - expenses
+        // 5. Staff Consumption
+        reportHTML += `<h3>5️⃣ Staff Consumption</h3><table><tr><th>Product</th><th>Consumed</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].staffTotal}</td></tr>`; });
+        reportHTML += `</table>`;
 
-document.getElementById("report").innerHTML=
-"<h2>📊 DAILY REPORT</h2>"+
-"Total Sales ₹"+salesTotal+"<br>"+
-"Parcel Income ₹"+parcel+"<br>"+
-"Expenses ₹"+expenses+"<br>"+
-"<h1>💰 PROFIT ₹"+profit+"</h1>"
-}
+        // 6. Bottles Sold
+        reportHTML += `<h3>6️⃣ Bottles Sold (Customer Sales)</h3><table><tr><th>Product</th><th>Quantity Sold</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td class="highlight">${data[p.id].sold}</td></tr>`; });
+        reportHTML += `</table>`;
 
+        // 7. Sales Revenue Table
+        reportHTML += `<h3>7️⃣ Sales Revenue</h3><table><tr><th>Product</th><th>Sold</th><th>Price</th><th>Revenue</th></tr>`;
+        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].sold}</td><td>₹${data[p.id].price}</td><td><b>₹${data[p.id].revenue}</b></td></tr>`; });
+        reportHTML += `<tr class="highlight"><td colspan="3">Total Product Sales</td><td>₹${totalSalesRevenue}</td></tr></table>`;
+
+        // 8. Expenses Summary
+        reportHTML += `<h3>8️⃣ Expenses Summary</h3><table>
+            <tr><td>Auto</td><td>₹${expAuto}</td></tr>
+            <tr><td>Salary</td><td>₹${expSalary}</td></tr>
+            <tr><td>Other</td><td>₹${expOther}</td></tr>
+            <tr class="highlight"><td>Total Expenses</td><td>₹${totalExpenses}</td></tr>
+        </table>`;
+
+        // 9. Profit Calculation
+        reportHTML += `<h3>9️⃣ Profit Calculation</h3><table>
+            <tr><td>Total Product Sales</td><td>₹${totalSalesRevenue}</td></tr>
+            <tr><td>Parcel Income</td><td>₹${parcelIncome}</td></tr>
+            <tr class="highlight"><td>Gross Revenue</td><td>₹${grossRevenue}</td></tr>
+            <tr><td>Minus Total Expenses</td><td>- ₹${totalExpenses}</td></tr>
+        </table>`;
+
+        // 10. FINAL SUMMARY
+        reportHTML += `<h3>🔟 FINAL SUMMARY</h3>
+        <div class="summary-box">
+            <p>📈 <b>Gross Revenue Inflow:</b> ₹${grossRevenue}</p>
+            <p>💸 <b>Total Expenses Outflow:</b> ₹${totalExpenses}</p>
+            <h2 style="margin-top: 15px; border-top: 1px solid #444; padding-top: 15px;">
+                💰 Expected Cash In Hand (Net Profit): ₹${netProfit}
+            </h2>
+        </div>`;
+
+        const outputDiv = document.getElementById('reportOutput');
+        outputDiv.innerHTML = reportHTML;
+        outputDiv.style.display = 'block';
+        
+        // Scroll down to the report seamlessly
+        outputDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Run setup on load
+    window.onload = buildForm;
 </script>
 </body>
-  </html>
+    </html>
