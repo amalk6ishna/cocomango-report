@@ -3,193 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cocomango Daily Report</title>
+    <title>Cocomango Admin | Daily Reports</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
+            --bg-color: #000000;
+            --card-bg: #121212;
             --text-main: #ffffff;
-            --text-muted: #aaaaaa;
-            --accent: #f5a623; /* Mango Orange */
-            --accent-hover: #ffbc42;
-            --border: #333333;
+            --text-muted: #888888;
+            --accent: #ffcc00; /* Bright Mango */
+            --success: #2ecc71;
+            --border: #222222;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            padding: 20px;
-            line-height: 1.6;
+            padding: 15px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
-        h1, h2, h3 {
-            color: var(--accent);
-            margin-bottom: 15px;
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 30px;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 10px;
-        }
+        h1 { margin: 0; color: var(--accent); letter-spacing: 1px; }
+        h2 { font-size: 1.1rem; color: var(--accent); text-transform: uppercase; margin-bottom: 15px; }
 
         .card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: var(--card-bg);
             border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .input-grid {
+        .input-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed var(--border);
-        }
-
-        .input-grid.headers {
-            font-weight: bold;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--border);
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
             gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1a1a1a;
         }
+
+        .input-row.header-row { font-weight: bold; color: var(--text-muted); border-bottom: 2px solid var(--border); }
 
         input[type="number"] {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
+            background: #1a1a1a;
+            border: 1px solid #333;
             color: white;
             padding: 8px;
-            border-radius: 5px;
-            width: 70px;
-            font-size: 1rem;
-            outline: none;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        input[type="number"]:focus {
-            border-color: var(--accent);
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            position: sticky;
+            bottom: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 10px;
         }
 
         .btn {
-            display: block;
-            width: 100%;
-            background-color: var(--accent);
-            color: var(--bg-color);
-            font-size: 1.2rem;
-            font-weight: bold;
             padding: 15px;
             border: none;
             border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
             text-transform: uppercase;
-            margin-top: 20px;
         }
 
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
+        .btn-generate { background: var(--accent); color: black; }
+        .btn-download { background: var(--success); color: white; display: none; }
 
         /* Report Styles */
         #reportOutput {
+            margin-top: 30px;
+            padding: 20px;
+            background: #000;
             display: none;
-            margin-top: 40px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            background-color: var(--card-bg);
+            font-size: 0.9rem;
         }
 
         th, td {
-            border: 1px solid var(--border);
-            padding: 12px;
+            border: 1px solid #333;
+            padding: 10px;
             text-align: left;
         }
 
-        th {
-            background-color: #2a2a2a;
-            color: var(--accent);
-        }
-
-        .highlight {
-            background-color: rgba(245, 166, 35, 0.1);
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .summary-box {
-            background-color: #2a2a2a;
-            border-left: 5px solid var(--accent);
-            padding: 20px;
-            font-size: 1.2rem;
-        }
+        th { background: #111; color: var(--accent); }
+        .highlight { background: #1a1a1a; font-weight: bold; }
+        .profit-row { font-size: 1.2rem; color: var(--success); border-top: 2px solid var(--success); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🥥 Cocomango Daily Report 🥭</h1>
+    <header>
+        <h1>🥭 COCOMANGO</h1>
+        <p style="color: var(--text-muted)">Daily Stock & Sales Auditor</p>
+    </header>
 
-    <div id="formContainer">
-        </div>
+    <div id="formFields"></div>
 
     <div class="card">
         <h2>5️⃣ PARCEL INCOME</h2>
-        <div class="input-group">
-            <label>Parcel Charges Received (₹): </label>
-            <input type="number" id="parcelIncome" value="0" min="0">
+        <div class="input-row" style="grid-template-columns: 2fr 2fr;">
+            <label>Parcel Charges (₹)</label>
+            <input type="number" id="parcelIncome" value="0">
         </div>
     </div>
 
     <div class="card">
         <h2>6️⃣ EXPENSES</h2>
-        <div class="input-grid">
-            <label>Auto (₹):</label>
-            <input type="number" id="expAuto" value="0" min="0">
-        </div>
-        <div class="input-grid">
-            <label>Salary (₹):</label>
-            <input type="number" id="expSalary" value="0" min="0">
-        </div>
-        <div class="input-grid">
-            <label>Other Expenses (₹):</label>
-            <input type="number" id="expOther" value="0" min="0">
-        </div>
+        <div class="input-row" style="grid-template-columns: 2fr 2fr;"><span>Auto (₹)</span><input type="number" id="expAuto" value="0"></div>
+        <div class="input-row" style="grid-template-columns: 2fr 2fr;"><span>Salary (₹)</span><input type="number" id="expSalary" value="0"></div>
+        <div class="input-row" style="grid-template-columns: 2fr 2fr;"><span>Other (₹)</span><input type="number" id="expOther" value="0"></div>
     </div>
 
-    <button class="btn" onclick="generateReport()">Generate Daily Report</button>
+    <div class="btn-group">
+        <button class="btn btn-generate" onclick="calculateReport()">Generate Report</button>
+        <button id="dlBtn" class="btn btn-download" onclick="downloadPDF()">Download PDF</button>
+    </div>
 
-    <div id="reportOutput">
-        </div>
+    <div id="reportOutput"></div>
 </div>
 
 <script>
-    // Product Configuration
     const products = [
-        { id: 'tc300', name: 'Tender Coconut Sarbath (300ml)', price: 70 },
-        { id: 'tc600', name: 'Tender Coconut Sarbath (600ml)', price: 100 },
+        { id: 'tc300', name: 'Tender Coconut (300ml)', price: 70 },
+        { id: 'tc600', name: 'Tender Coconut (600ml)', price: 100 },
         { id: 'mango', name: 'Thick Mango Juice', price: 100 },
         { id: 'coffee', name: 'Cold Coffee', price: 90 },
         { id: 'rose', name: 'Rose Milk', price: 90 },
@@ -198,151 +163,92 @@
     ];
 
     const sections = [
-        { id: 'open', title: '1️⃣ MORNING OPENING STOCK', hasFridgeFreezer: true },
-        { id: 'add', title: '2️⃣ STOCK ADDED TODAY', hasFridgeFreezer: true },
-        { id: 'close', title: '3️⃣ CURRENT PHYSICAL STOCK (NOW)', hasFridgeFreezer: true },
-        { id: 'staff', title: '4️⃣ STAFF CONSUMPTION (FREE DRINKS)', hasFridgeFreezer: false }
+        { id: 'open', title: '1️⃣ Morning Opening Stock' },
+        { id: 'add', title: '2️⃣ Stock Added Today' },
+        { id: 'current', title: '3️⃣ Current Physical Stock' }
     ];
 
-    // Initialize Form UI
-    function buildForm() {
-        const container = document.getElementById('formContainer');
-        
-        sections.forEach(sec => {
-            let html = `<div class="card"><h2>${sec.title}</h2>`;
-            
-            if (sec.hasFridgeFreezer) {
-                html += `<div class="input-grid headers"><div>Product</div><div>Freezer</div><div>Fridge</div></div>`;
-                products.forEach(p => {
-                    html += `
-                    <div class="input-grid">
-                        <div>${p.name}</div>
-                        <input type="number" id="${sec.id}_${p.id}_fz" value="0" min="0" placeholder="0">
-                        <input type="number" id="${sec.id}_${p.id}_fr" value="0" min="0" placeholder="0">
-                    </div>`;
-                });
-            } else {
-                products.forEach(p => {
-                    html += `
-                    <div class="input-grid" style="grid-template-columns: 2fr 1fr;">
-                        <div>${p.name}</div>
-                        <input type="number" id="${sec.id}_${p.id}" value="0" min="0" placeholder="0">
-                    </div>`;
-                });
-            }
+    function init() {
+        let html = '';
+        sections.forEach(s => {
+            html += `<div class="card"><h2>${s.title}</h2><div class="input-row header-row"><div>Product</div><div>Freezer</div><div>Fridge</div></div>`;
+            products.forEach(p => {
+                html += `<div class="input-row"><div>${p.name}</div>
+                    <input type="number" id="${s.id}_fz_${p.id}" value="0">
+                    <input type="number" id="${s.id}_fr_${p.id}" value="0">
+                </div>`;
+            });
             html += `</div>`;
-            container.innerHTML += html;
         });
+
+        let staffHtml = `<div class="card"><h2>4️⃣ Staff Consumption</h2>`;
+        products.forEach(p => {
+            staffHtml += `<div class="input-row" style="grid-template-columns: 3fr 1fr;"><div>${p.name}</div><input type="number" id="staff_${p.id}" value="0"></div>`;
+        });
+        document.getElementById('formFields').innerHTML = html + staffHtml + `</div>`;
     }
 
-    // Helper to get value safely
-    const val = (id) => parseInt(document.getElementById(id)?.value) || 0;
+    const getV = (id) => parseInt(document.getElementById(id).value) || 0;
 
-    // Generate Report Logic
-    function generateReport() {
-        let reportHTML = `<h1>📊 COCOMANGO DAILY REPORT</h1>`;
-        let data = {};
-        let totalSalesRevenue = 0;
-
-        // Collect and calculate data
-        products.forEach(p => {
-            const oFz = val(`open_${p.id}_fz`); const oFr = val(`open_${p.id}_fr`);
-            const aFz = val(`add_${p.id}_fz`); const aFr = val(`add_${p.id}_fr`);
-            const cFz = val(`close_${p.id}_fz`); const cFr = val(`close_${p.id}_fr`);
-            
-            const openTotal = oFz + oFr;
-            const addTotal = aFz + aFr;
-            const availableTotal = openTotal + addTotal;
-            const closeTotal = cFz + cFr;
-            const staffTotal = val(`staff_${p.id}`);
-            
-            let sold = availableTotal - closeTotal - staffTotal;
-            sold = sold < 0 ? 0 : sold; // Prevent negative sales
+    function calculateReport() {
+        let totalRev = 0;
+        let report = `<h2>📊 DAILY SALES REPORT - ${new Date().toLocaleDateString()}</h2>`;
+        
+        // Logical storage for math
+        const results = products.map(p => {
+            const open = getV(`open_fz_${p.id}`) + getV(`open_fr_${p.id}`);
+            const added = getV(`add_fz_${p.id}`) + getV(`add_fr_${p.id}`);
+            const current = getV(`current_fz_${p.id}`) + getV(`current_fr_${p.id}`);
+            const staff = getV(`staff_${p.id}`);
+            const sold = (open + added) - current - staff;
             const revenue = sold * p.price;
-            totalSalesRevenue += revenue;
-
-            data[p.id] = { oFz, oFr, openTotal, aFz, aFr, addTotal, availableTotal, cFz, cFr, closeTotal, staffTotal, sold, revenue, price: p.price, name: p.name };
+            totalRev += revenue;
+            return { ...p, open, added, current, staff, sold, revenue };
         });
 
-        const parcelIncome = val('parcelIncome');
-        const expAuto = val('expAuto');
-        const expSalary = val('expSalary');
-        const expOther = val('expOther');
-        const totalExpenses = expAuto + expSalary + expOther;
-        const grossRevenue = totalSalesRevenue + parcelIncome;
-        const netProfit = grossRevenue - totalExpenses;
+        const pIncome = getV('parcelIncome');
+        const exAuto = getV('expAuto');
+        const exSal = getV('expSalary');
+        const exOth = getV('expOther');
+        const totalExp = exAuto + exSal + exOth;
+        const gross = totalRev + pIncome;
 
-        // 1. Opening Stock Table
-        reportHTML += `<h3>1️⃣ Opening Stock</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].oFz}</td><td>${data[p.id].oFr}</td><td><b>${data[p.id].openTotal}</b></td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 2. Added Stock Table
-        reportHTML += `<h3>2️⃣ Added Stock Today</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].aFz}</td><td>${data[p.id].aFr}</td><td><b>${data[p.id].addTotal}</b></td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 3. Total Available Stock
-        reportHTML += `<h3>3️⃣ Total Available Stock</h3><table><tr><th>Product</th><th>Total Available (Opening + Added)</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td><b>${data[p.id].availableTotal}</b></td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 4. Closing Stock Table
-        reportHTML += `<h3>4️⃣ Closing Stock (Physical)</h3><table><tr><th>Product</th><th>Freezer</th><th>Fridge</th><th>Total</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].cFz}</td><td>${data[p.id].cFr}</td><td><b>${data[p.id].closeTotal}</b></td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 5. Staff Consumption
-        reportHTML += `<h3>5️⃣ Staff Consumption</h3><table><tr><th>Product</th><th>Consumed</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].staffTotal}</td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 6. Bottles Sold
-        reportHTML += `<h3>6️⃣ Bottles Sold (Customer Sales)</h3><table><tr><th>Product</th><th>Quantity Sold</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td class="highlight">${data[p.id].sold}</td></tr>`; });
-        reportHTML += `</table>`;
-
-        // 7. Sales Revenue Table
-        reportHTML += `<h3>7️⃣ Sales Revenue</h3><table><tr><th>Product</th><th>Sold</th><th>Price</th><th>Revenue</th></tr>`;
-        products.forEach(p => { reportHTML += `<tr><td>${p.name}</td><td>${data[p.id].sold}</td><td>₹${data[p.id].price}</td><td><b>₹${data[p.id].revenue}</b></td></tr>`; });
-        reportHTML += `<tr class="highlight"><td colspan="3">Total Product Sales</td><td>₹${totalSalesRevenue}</td></tr></table>`;
-
-        // 8. Expenses Summary
-        reportHTML += `<h3>8️⃣ Expenses Summary</h3><table>
-            <tr><td>Auto</td><td>₹${expAuto}</td></tr>
-            <tr><td>Salary</td><td>₹${expSalary}</td></tr>
-            <tr><td>Other</td><td>₹${expOther}</td></tr>
-            <tr class="highlight"><td>Total Expenses</td><td>₹${totalExpenses}</td></tr>
-        </table>`;
-
-        // 9. Profit Calculation
-        reportHTML += `<h3>9️⃣ Profit Calculation</h3><table>
-            <tr><td>Total Product Sales</td><td>₹${totalSalesRevenue}</td></tr>
-            <tr><td>Parcel Income</td><td>₹${parcelIncome}</td></tr>
-            <tr class="highlight"><td>Gross Revenue</td><td>₹${grossRevenue}</td></tr>
-            <tr><td>Minus Total Expenses</td><td>- ₹${totalExpenses}</td></tr>
-        </table>`;
-
-        // 10. FINAL SUMMARY
-        reportHTML += `<h3>🔟 FINAL SUMMARY</h3>
-        <div class="summary-box">
-            <p>📈 <b>Gross Revenue Inflow:</b> ₹${grossRevenue}</p>
-            <p>💸 <b>Total Expenses Outflow:</b> ₹${totalExpenses}</p>
-            <h2 style="margin-top: 15px; border-top: 1px solid #444; padding-top: 15px;">
-                💰 Expected Cash In Hand (Net Profit): ₹${netProfit}
-            </h2>
+        // Generating HTML Tables for the 10 Mandatory Sections
+        report += `<h3>1️⃣ Opening Stock</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>${r.open}</td></tr>`).join('') + `</table>`;
+        report += `<h3>2️⃣ Added Stock</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>${r.added}</td></tr>`).join('') + `</table>`;
+        report += `<h3>3️⃣ Total Available</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>${r.open + r.added}</td></tr>`).join('') + `</table>`;
+        report += `<h3>4️⃣ Closing Stock</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>${r.current}</td></tr>`).join('') + `</table>`;
+        report += `<h3>5️⃣ Staff Consumption</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>${r.staff}</td></tr>`).join('') + `</table>`;
+        report += `<h3>6️⃣ Bottles Sold</h3><table><tr><th>Product</th><th>Qty</th></tr>` + results.map(r => `<tr class="highlight"><td>${r.name}</td><td>${r.sold}</td></tr>`).join('') + `</table>`;
+        report += `<h3>7️⃣ Sales Revenue</h3><table><tr><th>Product</th><th>Price</th><th>Total</th></tr>` + results.map(r => `<tr><td>${r.name}</td><td>₹${r.price}</td><td>₹${r.revenue}</td></tr>`).join('') + `<tr><th>Total Sales</th><th></th><th>₹${totalRev}</th></tr></table>`;
+        report += `<h3>8️⃣ Expenses Summary</h3><table><tr><td>Auto</td><td>₹${exAuto}</td></tr><tr><td>Salary</td><td>₹${exSal}</td></tr><tr><td>Other</td><td>₹${exOth}</td></tr><tr class="highlight"><td>Total Expenses</td><td>₹${totalExp}</td></tr></table>`;
+        report += `<h3>9️⃣ Profit Calculation</h3><table><tr><td>Gross (Sales + Parcel)</td><td>₹${gross}</td></tr><tr><td>Expenses</td><td>- ₹${totalExp}</td></tr></table>`;
+        report += `<h3>🔟 FINAL SUMMARY</h3><div class="card" style="border: 2px solid var(--accent)">
+            <p>Cash Inflow: ₹${gross}</p>
+            <p>Cash Outflow: ₹${totalExp}</p>
+            <h2 style="margin:0">Net Profit: ₹${gross - totalExp}</h2>
         </div>`;
 
-        const outputDiv = document.getElementById('reportOutput');
-        outputDiv.innerHTML = reportHTML;
-        outputDiv.style.display = 'block';
-        
-        // Scroll down to the report seamlessly
-        outputDiv.scrollIntoView({ behavior: 'smooth' });
+        const out = document.getElementById('reportOutput');
+        out.innerHTML = report;
+        out.style.display = 'block';
+        document.getElementById('dlBtn').style.display = 'block';
+        out.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Run setup on load
-    window.onload = buildForm;
+    function downloadPDF() {
+        const element = document.getElementById('reportOutput');
+        const opt = {
+            margin: 10,
+            filename: `Cocomango_${new Date().toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, backgroundColor: '#000000' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    init();
 </script>
 </body>
-    </html>
+            </html>
