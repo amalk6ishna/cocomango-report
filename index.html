@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cocomango Daily Report</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#111;
+    color:#fff;
+    padding:20px;
+}
+h1{color:#00ffae;}
+input{width:70px;margin:3px;padding:4px;}
+button{
+    padding:10px;
+    background:#00ffae;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+table{
+    border-collapse:collapse;
+    margin-top:15px;
+}
+td,th{
+    border:1px solid #555;
+    padding:6px;
+}
+#report{
+    background:#000;
+    padding:15px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🥭 COCOMANGO DAILY ACCOUNTANT</h1>
+
+<h3>Opening Stock (Fridge)</h3>
+300ml <input id="o300f">
+600ml <input id="o600f">
+Mango <input id="omango">
+Coffee <input id="ocoffee">
+Rose <input id="orose">
+Badam <input id="obadam">
+Chocolate <input id="ochoco">
+
+<h3>Stock Added</h3>
+Small <input id="as">
+Large <input id="al">
+Mango <input id="amango">
+Coffee <input id="acoffee">
+Badam <input id="abadam">
+
+<h3>Current Stock</h3>
+300ml <input id="c300">
+600ml <input id="c600">
+Mango <input id="cmango">
+Coffee <input id="ccoffee">
+Rose <input id="crose">
+Badam <input id="cbadam">
+Chocolate <input id="cchoco">
+
+<h3>Staff Drinks</h3>
+Staff Small <input id="ss">
+Staff Large <input id="sl">
+
+<h3>Payments</h3>
+Paytm <input id="paytm">
+Cash <input id="cash">
+Parcel Income <input id="parcel">
+
+<h3>Expenses</h3>
+Auto <input id="auto">
+Salary <input id="salary">
+Other <input id="other">
+
+<br><br>
+<button onclick="generate()">Generate Report</button>
+
+<div id="report"></div>
+
+<script>
+
+const price={
+ small:70,
+ large:100,
+ mango:100,
+ coffee:90,
+ rose:90,
+ badam:90,
+ choco:90
+}
+
+function val(id){return Number(document.getElementById(id).value)||0}
+
+function generate(){
+
+// Opening
+o300=val("o300f")
+o600=val("o600f")
+omango=val("omango")
+ocoffee=val("ocoffee")
+orose=val("orose")
+obadam=val("obadam")
+ochoco=val("ochoco")
+
+// Added
+as=val("as")
+al=val("al")
+amango=val("amango")
+acoffee=val("acoffee")
+abadam=val("abadam")
+
+// Closing
+c300=val("c300")
+c600=val("c600")
+cmango=val("cmango")
+ccoffee=val("ccoffee")
+crose=val("crose")
+cbadam=val("cbadam")
+cchoco=val("cchoco")
+
+// Staff
+ss=val("ss")
+sl=val("sl")
+
+// Sales from stock difference
+soldSmall = (o300 + as) - c300 - ss
+soldLarge = (o600 + al) - c600 - sl
+soldMango = (omango + amango) - cmango
+soldCoffee = (ocoffee + acoffee) - ccoffee
+soldBadam = (obadam + abadam) - cbadam
+soldRose = orose - crose
+soldChoco = ochoco - cchoco
+
+salesTotal =
+soldSmall*price.small +
+soldLarge*price.large +
+soldMango*price.mango +
+soldCoffee*price.coffee +
+soldBadam*price.badam +
+soldRose*price.rose +
+soldChoco*price.choco
+
+paytm=val("paytm")
+cash=val("cash")
+parcel=val("parcel")
+
+expenses = val("auto")+val("salary")+val("other")
+
+profit = paytm + cash + parcel - expenses
+
+document.getElementById("report").innerHTML=
+"<h2>📊 DAILY REPORT</h2>"+
+"Total Sales ₹"+salesTotal+"<br>"+
+"Parcel Income ₹"+parcel+"<br>"+
+"Expenses ₹"+expenses+"<br>"+
+"<h1>💰 PROFIT ₹"+profit+"</h1>"
+}
+
+</script>
+</body>
+  </html>
